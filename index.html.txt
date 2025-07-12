@@ -1,0 +1,152 @@
+index.html
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FocusFlow</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #6a11cb, #2575fc);
+      color: #fff;
+      text-align: center;
+    }
+    header {
+      padding: 1.5rem;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    nav button {
+      display: block;
+      margin: 1rem auto;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      background: #fff;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .page {
+      display: none;
+      padding: 1rem;
+    }
+    textarea, input[type="text"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+    }
+    canvas {
+      border: 2px solid #fff;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>FocusFlow - Let Your Ideas Inspire Others 💡</header>
+  <nav>
+    <button onclick="showPage('search')">Search</button>
+    <button onclick="showPage('inspire')">Inspire (Write Blog)</button>
+    <button onclick="showPage('read')">Read Blogs</button>
+    <button onclick="showPage('draw')">Draw</button>
+    <button onclick="showPage('login')">Login/Profile</button>
+  </nav>  <div id="search" class="page">
+    <h2>Search Blog Ideas and People</h2>
+    <input type="text" placeholder="Search by topic or user" />
+    <p>Suggestions: Productivity, Exams, Career Tips, Coding, Focus</p>
+  </div>  <div id="inspire" class="page">
+    <h2>Write a Blog</h2>
+    <input type="text" id="blogTitle" placeholder="Blog Title" />
+    <textarea id="blogContent" rows="10" placeholder="Write your blog here..."></textarea>
+    <br />
+    <button onclick="publishBlog()">Publish Blog</button>
+    <p id="publishMessage"></p>
+  </div>  <div id="read" class="page">
+    <h2>Read Blogs</h2>
+    <div id="blogs"></div>
+  </div>  <div id="draw" class="page">
+    <h2>Drawing Canvas</h2>
+    <canvas id="canvas" width="300" height="300"></canvas>
+    <br />
+    <button onclick="clearCanvas()">Clear</button>
+  </div>  <div id="login" class="page">
+    <h2>Login / Profile</h2>
+    <input type="text" id="username" placeholder="Enter your name" />
+    <input type="text" id="email" placeholder="Enter your email" />
+    <button onclick="saveProfile()">Save Profile</button>
+    <p id="profileInfo"></p>
+  </div>  <script>
+    const blogs = [];
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function publishBlog() {
+      const title = document.getElementById('blogTitle').value;
+      const content = document.getElementById('blogContent').value;
+      if (title && content) {
+        blogs.push({ title, content });
+        document.getElementById('publishMessage').innerText = 'Blog Published!';
+        document.getElementById('blogTitle').value = '';
+        document.getElementById('blogContent').value = '';
+        showBlogs();
+      } else {
+        document.getElementById('publishMessage').innerText = 'Please fill all fields';
+      }
+    }
+
+    function showBlogs() {
+      const blogDiv = document.getElementById('blogs');
+      blogDiv.innerHTML = '';
+      blogs.forEach((b, i) => {
+        blogDiv.innerHTML += `<h3>${i + 1}. ${b.title}</h3><p>${b.content}</p><hr>`;
+      });
+    }
+
+    function clearCanvas() {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function saveProfile() {
+      const name = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      if (name && email) {
+        document.getElementById('profileInfo').innerText = `Profile Saved:\nName: ${name}\nEmail: ${email}`;
+      } else {
+        document.getElementById('profileInfo').innerText = 'Please enter both fields';
+      }
+    }
+
+    // Drawing functionality
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas?.getContext('2d');
+    let drawing = false;
+
+    canvas?.addEventListener('mousedown', () => drawing = true);
+    canvas?.addEventListener('mouseup', () => drawing = false);
+    canvas?.addEventListener('mousemove', draw);
+
+    function draw(e) {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = 'white';
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+
+    showPage('search');
+  </script></body>
+</html>
